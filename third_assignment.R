@@ -4,6 +4,9 @@ setwd("Desktop/Hertie/1st Semester/Collaborative Social Science Data Analysis/Th
 
 library(dplyr)
 library(plyr)
+library(psych)
+library(ggplot)
+library(car)
 
 # We are about to prepare the dataset on which we will carry on our analysis.
 
@@ -72,3 +75,14 @@ MergedData3 <- merge(x = MergedData2, y = suicide_clean, union("macro_area", "ye
 
 MergedData4 <- merge(x = MergedData2, y = suicide_clean, union("macro_area", "year"), all = F)
 
+# Linear Model.
+
+M1 <- lm(tot_suicide ~ gdp_pc + avg_precipitations + avg_temperature + gini_index , data = MergedData4)
+
+summary(M1)
+
+M2 <- lm(tot_suicide ~ gdp_pc + avg_temperature + gini_index , data = MergedData4)
+
+summary(M2)
+
+scatterplotMatrix(MergedData4[,3:7])
