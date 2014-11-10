@@ -40,10 +40,12 @@ gdp <- rename(gdp, replace = c("gdp.GEO" = "macro_area"))
 gdp <- rename(gdp, replace = c("gdp.TIME" = "year"))
 gdp <- rename(gdp, replace = c("gdp.Value" = "gdp_pc"))
 
-## We rename manually nordwest and nordeast as "north" and south and islands as "south" to make this table comparable with the others.
-
-suicides_rough$macro_area <- c( "north", "north", "centre", "south", "south", "north", "north","centre", "south", "south","north", "north", "centre", "south", "south","north","north", "centre", "south", "south" )
+## We rename nordwest and nordeast as "north" and south and islands as "south" to make this table comparable with the others.
 
 suicides_rough$macro_area <- as.character(suicides_rough$macro_area)
+
+suicides_rough$macro_area[suicides_rough$macro_area == "nordeast"] <- "north"
+suicides_rough$macro_area[suicides_rough$macro_area == "nordwest"] <- "north"
+suicides_rough$macro_area[suicides_rough$macro_area == "islands"] <- "south"
 
 ## The next step will be to sum the number of suicides in not aggregate macro areas to obtain this data for the aggregate macro area.
