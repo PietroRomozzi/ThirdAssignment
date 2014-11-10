@@ -40,6 +40,14 @@ gdp <- rename(gdp, replace = c("gdp.GEO" = "macro_area"))
 gdp <- rename(gdp, replace = c("gdp.TIME" = "year"))
 gdp <- rename(gdp, replace = c("gdp.Value" = "gdp_pc"))
 
+# weather and gdp are tidy. We merge these two data frames.
+
+MergedData1 <- merge(x = weather, y = gdp, union("macro_area", "year"), all = T )
+
+# Now we merge the latter with data from the table gini.
+
+MergedData2 <- merge(x = MergedData1, y = gini, union("macro_area", "year"), all = T )
+
 ## We rename nordwest and nordeast as "north" and south and islands as "south" to make this table comparable with the others.
 
 suicides_rough$macro_area <- as.character(suicides_rough$macro_area)
