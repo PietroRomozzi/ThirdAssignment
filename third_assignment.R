@@ -1,6 +1,8 @@
-## Firstly, we set the wd
+## Firstly, we set the wd and load some useful packages
 
 setwd("Desktop/Hertie/1st Semester/Collaborative Social Science Data Analysis/ThirdAssignment/")
+
+library(plyr)
 
 # We are about to prepare the dataset on which we will carry on our analysis.
 
@@ -22,13 +24,26 @@ suicides_rough <- read.csv("RoughData_suicides.csv", header = T, sep =";", dec =
 
 gdp <- read.csv("RoughData_gdp.csv", header = T, sep =";", dec = ",", fill = T)
 
-## We aggregate data for suicides to obtain data for north instead of norht-west and north-east. Likewise for south and islands.
+## We remove the useless column UNIT
 
-north <- c("nordwest", "nordeast")
-south <- c("south", "islands")
-centre <- "centre"
+gdp <- data.frame(gdp$TIME, gdp$GEO, gdp$Value)
 
-suicide <- aggregate()
+# We rename variables and wrong named object in the table to make it comparable with others we use.
 
-suicides_rough$aggregate_area <- ifelse(suicides_rough$macro_area == "nordeast" | suicides_rough$macro_area == "nordwest", "north", no)
-suicides_rough$aggregate_area <- ifelse(suicides_rough$macro_area == "south" | suicides_rough$macro_area == "islands", "south", )
+gdp$gdp.GEO <- as.character(gdp$gdp.GEO)
+
+gdp$gdp.GEO[gdp$gdp.GEO == "Nord"] <- "north"
+gdp$gdp.GEO[gdp$gdp.GEO == "Centro (IT)"] <- "centre"
+gdp$gdp.GEO[gdp$gdp.GEO == "Sud"] <- "south"
+
+gdp <- rename(gdp, replace = c("gdp.GEO" = "macro_area"))
+gdp <- rename(gdp, replace = c("gdp.TIME" = "year"))
+gdp <- rename(gdp, replace = c("gdp.Value" = "gdp_pc"))
+
+## We rename manually nordwest and nordeast as "north" and south and islands as "south" to make this table comparable with the others.
+
+suicides_rough$macro_area <- c( "north", "north", "centre", "south", "south", "north", "north","centre", "south", "south","north", "north", "centre", "south", "south","north","north", "centre", "south", "south" )
+
+suicides_rough$macro_area <- as.character(suicides_rough$macro_area)
+
+## The next step will be to sum the number of suicides in not aggregate macro areas to obtain this data for the aggregate macro area.
