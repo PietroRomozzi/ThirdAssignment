@@ -2,6 +2,7 @@
 
 setwd("Desktop/Hertie/1st Semester/Collaborative Social Science Data Analysis/ThirdAssignment/")
 
+library(dplyr)
 library(plyr)
 
 # We are about to prepare the dataset on which we will carry on our analysis.
@@ -20,11 +21,11 @@ gini <- read.csv("TidyData_gini.csv", header = T, sep =";", dec = ",", fill = T)
 
 suicides_rough <- read.csv("RoughData_suicides.csv", header = T, sep =";", dec = ",", fill = T)
 
-## Loading rough data about gdp per capita.
+## Loading rough data about gdp per capita (euros per person).
 
 gdp <- read.csv("RoughData_gdp.csv", header = T, sep =";", dec = ",", fill = T)
 
-## We remove the useless column UNIT
+## We remove the useless column UNIT.
 
 gdp <- data.frame(gdp$TIME, gdp$GEO, gdp$Value)
 
@@ -57,3 +58,17 @@ suicides_rough$macro_area[suicides_rough$macro_area == "nordwest"] <- "north"
 suicides_rough$macro_area[suicides_rough$macro_area == "islands"] <- "south"
 
 ## The next step will be to sum the number of suicides in not aggregate macro areas to obtain this data for the aggregate macro area.
+
+suicides_rough$suicides <- as.numeric(suicides_rough$suicides)
+
+suicides_clean <- group_by(suicides_rough, macro_area, year)
+suicide_clean <- summarise(suicides_clean, tot_suicide = sum(suicides))
+
+# Final merge.
+
+MergedData3 <- merge(x = MergedData2, y = suicide_clean, union("macro_area", "year"), all = T)
+
+# MergedData 3 contains NAs, so we made this merge again not to include NA so using a complete dataframe.
+
+MergedData4 <- merge(x = MergedData2, y = suicide_clean, union("macro_area", "year"), all = F)
+
