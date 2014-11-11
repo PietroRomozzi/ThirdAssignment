@@ -95,3 +95,26 @@ summary(M2)
 
 scatterplotMatrix(MergedData4[,3:7])
 
+#############################################################################
+
+# Recognized weaknesses of the previous method
+
+# Upload tidy dataset for 2009 with data for every italian region.
+
+Dataset2009 <- read.csv("TidyDataset2009.csv", header = TRUE, sep = ";", dec = ",", fill = TRUE)
+
+LM1 <- lm(std_suicides_rate ~ gdp_pc + avg_precipitations + avg_temperature + gini_index , data = Dataset2009)
+
+summary(LM1)
+
+scatterplotMatrix(Dataset2009[,c(2,3,5,6,7)])
+
+plot(LM1)
+
+# Given fews observation, we drop a variable - gini_index - to gain more degrees of freedom. That is because gini index is slightly correlated with gdp per capita.
+
+LM2 <- lm(std_suicides_rate ~ gdp_pc + avg_precipitations + avg_temperature, data = Dataset2009)
+
+summary(LM2)
+
+stats::confint(LM2)
