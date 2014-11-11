@@ -6,3 +6,30 @@ output: pdf_document
 ---
 
 
+
+
+(PIETRO)
+-------
+
+# Sources
+
+Most of the data we needed to estimate our model was available on the ISTAT (Italian National Agency for Statistics) website 
+or in related agencies. The main advantage of using these sources is that data are clear, well structured and easy to use, since 
+they can be downloaded as excel or CSV files, which made it very simple to import the datasets on R. 
+
+Firstly, we started file TidyData_meteo.csv, which we had previously obtained from CRA-CMA (Department for meteorology applied to agriculture, ISTAT). Data were already subdivided by macroregions, namely North, Centre and South Italy. We gathered data regarding annual average temperatures, measured in Celsius degrees, and average annual precipitations, measured in millimiters for all years between 2005 and 2009. 
+
+```{r}
+weather <- read.csv("TidyData_meteo.csv", header = TRUE, sep = ";", dec = ",", fill = TRUE)
+
+
+```
+
+We then imported the Gini Index data we downloaded from the Istat website in the form of a CSV file. Again, data for the three macroregions we are interested in were available, as can be seen in the table below. As expected, Gini coefficient index is slightly higher in Southern Regions compared to the Centre and the North. 
+
+```{r, results= "asis"}
+ View(gini)
+
+
+```
+
