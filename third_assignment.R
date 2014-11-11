@@ -2,9 +2,11 @@
 
 setwd("Desktop/Hertie/1st Semester/Collaborative Social Science Data Analysis/ThirdAssignment/")
 
+library(knitr)
 library(plyr)
 library(ggplot2)
 library(car)
+library(xtable)
 
 # We are about to prepare the dataset on which we will carry on our analysis.
 
@@ -95,6 +97,8 @@ summary(M2)
 
 scatterplotMatrix(MergedData4[,3:7])
 
+M1Table <- xtable(M1, caption = "First Linear Model, Dependent Variable: Suicides per 100000 inhabitants", label = "BasicXtableSummary", digits = 1)
+
 #############################################################################
 
 # Recognized weaknesses of the previous method
@@ -118,3 +122,4 @@ LM2 <- lm(std_suicides_rate ~ gdp_pc + avg_precipitations + avg_temperature, dat
 summary(LM2)
 
 stats::confint(LM2)
+

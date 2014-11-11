@@ -5,8 +5,76 @@ date: "11 novembre 2014"
 output: html_document
 ---
 
+```{r, results = 'asis', echo = FALSE}
 
+library(knitr)
 
+library(plyr)
+
+library(ggplot2)
+
+weather <- read.csv("TidyData_meteo.csv", header = TRUE, sep = ";", dec = ",", fill = TRUE)
+
+gini <- read.csv("TidyData_gini.csv", header = T, sep =";", dec = ",", fill = T)
+
+suicides_rough <- read.csv("RoughData_suicides.csv", header = T, sep =";", dec = ",", fill = T)
+
+gdp <- read.csv("RoughData_gdp.csv", header = T, sep =";", dec = ",", fill = T)
+
+gdp <- data.frame(gdp$TIME, gdp$GEO, gdp$Value)
+
+gdp$gdp.GEO <- as.character(gdp$gdp.GEO)
+
+gdp$gdp.GEO[gdp$gdp.GEO == "Nord"] <- "north"
+gdp$gdp.GEO[gdp$gdp.GEO == "Centro (IT)"] <- "centre"
+gdp$gdp.GEO[gdp$gdp.GEO == "Sud"] <- "south"
+
+gdp <- plyr::rename(gdp, replace = c("gdp.GEO" = "macro_area"))
+gdp <- plyr::rename(gdp, replace = c("gdp.TIME" = "year"))
+gdp <- plyr::rename(gdp, replace = c("gdp.Value" = "gdp_pc"))
+
+MergedData1 <- merge(x = weather, y = gdp, union("macro_area", "year"), all = T )
+
+MergedData2 <- merge(x = MergedData1, y = gini, union("macro_area", "year"), all = T )
+
+suicides_rough$macro_area <- as.character(suicides_rough$macro_area)
+
+suicides_rough$macro_area[suicides_rough$macro_area == "northeast"] <- "north"
+suicides_rough$macro_area[suicides_rough$macro_area == "northwest"] <- "north"
+suicides_rough$macro_area[suicides_rough$macro_area == "islands"] <- "south"
+
+suicides_rough$suicides <- as.numeric(suicides_rough$suicides)
+
+suicides_clean <- dplyr::group_by(suicides_rough, macro_area, year)
+suicides_clean <- dplyr::summarise(suicides_clean, std_suicides_rate = mean(suicides))
+
+MergedData3 <- merge(x = MergedData2, y = suicides_clean, union("macro_area", "year"), all = T)
+
+MergedData4 <- merge(x = MergedData2, y = suicides_clean, union("macro_area", "year"), all = F)
+
+library(foreign)
+
+library(car)
+
+M1 <- lm(std_suicides_rate ~ gdp_pc + avg_precipitations + avg_temperature + gini_index , data = MergedData4)
+
+M2 <- lm(std_suicides_rate ~ gdp_pc + avg_temperature + avg_precipitations , data = MergedData4)
+
+```
+After an accurate process of data cleaning, we came up with the following dataset:
+```{r,results='asis',echo=FALSE}
+kable(MergedData4)
+```
+
+```{r,results='asis',echo=FALSE}
+
+library(xtable)
+
+TableM1 <- xtable(M1, digits=2)
+
+print.xtable(TableM1, type = "html")
+
+```
 
 (PIETRO)
 -------
@@ -20,16 +88,12 @@ they can be downloaded as excel or CSV files, which made it very simple to impor
 Firstly, we started file TidyData_meteo.csv, which we had previously obtained from CRA-CMA (Department for meteorology applied to agriculture, ISTAT). Data were already subdivided by macroregions, namely North, Centre and South Italy. We gathered data regarding annual average temperatures, measured in Celsius degrees, and average annual precipitations, measured in millimiters for all years between 2005 and 2009. 
 
 ```{r}
-weather <- read.csv("TidyData_meteo.csv", header = TRUE, sep = ";", dec = ",", fill = TRUE)
-
 
 ```
 
 We then imported the Gini Index data we downloaded from the Istat website in the form of a CSV file. Again, data for the three macroregions we are interested in were available, as can be seen in the table below. As expected, Gini coefficient index is slightly higher in Southern Regions compared to the Centre and the North. 
 
 ```{r, results= "asis"}
- View(gini)
-
-
+ 
 ```
 
