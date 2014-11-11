@@ -2,8 +2,8 @@
 
 setwd("Desktop/Hertie/1st Semester/Collaborative Social Science Data Analysis/ThirdAssignment/")
 
-library(dplyr)
 library(plyr)
+library(dplyr)
 library(psych)
 library(ggplot2)
 library(car)
@@ -65,15 +65,15 @@ suicides_rough$macro_area[suicides_rough$macro_area == "islands"] <- "south"
 suicides_rough$suicides <- as.numeric(suicides_rough$suicides)
 
 suicides_clean <- group_by(suicides_rough, macro_area, year)
-suicide_clean <- summarise(suicides_clean, tot_suicide = sum(suicides))
+suicides_clean <- summarise(suicides_clean, tot_suicide = sum(suicides))
 
 # Final merge.
 
-MergedData3 <- merge(x = MergedData2, y = suicide_clean, union("macro_area", "year"), all = T)
+MergedData3 <- merge(x = MergedData2, y = suicides_clean, union("macro_area", "year"), all = T)
 
 # MergedData 3 contains NAs, so we made this merge again not to include NA so using a complete dataframe.
 
-MergedData4 <- merge(x = MergedData2, y = suicide_clean, union("macro_area", "year"), all = F)
+MergedData4 <- merge(x = MergedData2, y = suicides_clean, union("macro_area", "year"), all = F)
 
 # Linear Model.
 
@@ -86,3 +86,4 @@ M2 <- lm(tot_suicide ~ gdp_pc + avg_temperature + gini_index , data = MergedData
 summary(M2)
 
 scatterplotMatrix(MergedData4[,3:7])
+
