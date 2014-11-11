@@ -79,9 +79,9 @@ MergedData4 <- merge(x = MergedData2, y = suicides_clean, union("macro_area", "y
 
 library(foreign)
 
-coplot(std_suicides_rate ~ year | macro_area, type = "b", xlab = "time", ylab = "std suicide rate per 100000 inhabitants", data = MergedData3)
+coplot(std_suicides_rate ~ year | macro_area, type = "b", xlab = "time", ylab = "std suicide rate per 100000 inhabitants", main = "Pattern for suicide rate over time", data = MergedData3)
 
-scatterplot(std_suicides_rate ~ year | macro_area, boxplots = F, smooth = T, reg.line = F, xlab = "time", ylab = "std suicide rate per 100000 inhabitants", data = MergedData3 )
+scatterplot(std_suicides_rate ~ year | macro_area, boxplots = F, smooth = T, reg.line = F, xlab = "time", ylab = "std suicide rate per 100000 inhabitants", main = "Regional comparison of suicide rate over time", data = MergedData3 )
 
 # Linear model.
 
@@ -94,3 +94,4 @@ M2 <- lm(std_suicides_rate ~ gdp_pc + avg_temperature + avg_precipitations , dat
 summary(M2)
 
 scatterplotMatrix(MergedData4[,3:7])
+
