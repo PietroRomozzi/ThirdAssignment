@@ -3,7 +3,6 @@
 setwd("Desktop/Hertie/1st Semester/Collaborative Social Science Data Analysis/ThirdAssignment/")
 
 library(plyr)
-library(dplyr)
 library(ggplot2)
 library(car)
 
@@ -60,6 +59,8 @@ suicides_rough$macro_area[suicides_rough$macro_area == "nordwest"] <- "north"
 suicides_rough$macro_area[suicides_rough$macro_area == "islands"] <- "south"
 
 ## The next step will be to sum the number of suicides in not aggregate macro areas to obtain this data for the aggregate macro area.
+
+library(dplyr)
 
 suicides_rough$suicides <- as.numeric(suicides_rough$suicides)
 
