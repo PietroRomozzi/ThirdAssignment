@@ -54,8 +54,8 @@ MergedData2 <- merge(x = MergedData1, y = gini, union("macro_area", "year"), all
 
 suicides_rough$macro_area <- as.character(suicides_rough$macro_area)
 
-suicides_rough$macro_area[suicides_rough$macro_area == "nordeast"] <- "north"
-suicides_rough$macro_area[suicides_rough$macro_area == "nordwest"] <- "north"
+suicides_rough$macro_area[suicides_rough$macro_area == "northeast"] <- "north"
+suicides_rough$macro_area[suicides_rough$macro_area == "northwest"] <- "north"
 suicides_rough$macro_area[suicides_rough$macro_area == "islands"] <- "south"
 
 ## The next step will be to sum the number of suicides in not aggregate macro areas to obtain this data for the aggregate macro area.
@@ -65,7 +65,7 @@ library(dplyr)
 suicides_rough$suicides <- as.numeric(suicides_rough$suicides)
 
 suicides_clean <- group_by(suicides_rough, macro_area, year)
-suicides_clean <- summarise(suicides_clean, tot_suicide = sum(suicides))
+suicides_clean <- summarise(suicides_clean, std_suicides_rate = mean(suicides))
 
 # Final merge.
 
@@ -75,15 +75,22 @@ MergedData3 <- merge(x = MergedData2, y = suicides_clean, union("macro_area", "y
 
 MergedData4 <- merge(x = MergedData2, y = suicides_clean, union("macro_area", "year"), all = F)
 
-# Linear Model.
+# Data presentation.
 
-M1 <- lm(tot_suicide ~ gdp_pc + avg_precipitations + avg_temperature + gini_index , data = MergedData4)
+library(foreign)
+
+coplot(std_suicides_rate ~ year | macro_area, type = "b", xlab = "time", ylab = "std suicide rate per 100000 inhabitants", data = MergedData3)
+
+scatterplot(std_suicides_rate ~ year | macro_area, boxplots = F, smooth = T, reg.line = F, xlab = "time", ylab = "std suicide rate per 100000 inhabitants", data = MergedData3 )
+
+# Linear model.
+
+M1 <- lm(std_suicides_rate ~ gdp_pc + avg_precipitations + avg_temperature + gini_index , data = MergedData4)
 
 summary(M1)
 
-M2 <- lm(tot_suicide ~ gdp_pc + avg_temperature + gini_index , data = MergedData4)
+M2 <- lm(std_suicides_rate ~ gdp_pc + avg_temperature + avg_precipitations , data = MergedData4)
 
 summary(M2)
 
 scatterplotMatrix(MergedData4[,3:7])
-
