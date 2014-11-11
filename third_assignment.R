@@ -5,7 +5,7 @@ setwd("Desktop/Hertie/1st Semester/Collaborative Social Science Data Analysis/Th
 library(dplyr)
 library(plyr)
 library(psych)
-library(ggplot)
+library(ggplot2)
 library(car)
 
 # We are about to prepare the dataset on which we will carry on our analysis.
