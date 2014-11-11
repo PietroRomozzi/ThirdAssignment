@@ -97,8 +97,6 @@ summary(M2)
 
 scatterplotMatrix(MergedData4[,3:7])
 
-M1Table <- xtable(M1, caption = "First Linear Model, Dependent Variable: Suicides per 100000 inhabitants", label = "BasicXtableSummary", digits = 1)
-
 #############################################################################
 
 # Recognized weaknesses of the previous method

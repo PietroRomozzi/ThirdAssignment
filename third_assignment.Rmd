@@ -2,7 +2,7 @@
 title: "Suicides in Italy - A comparative analysis among macro regions"
 author: "Pietro Romozzi and Federico Colombo"
 date: "11 novembre 2014"
-output: pdf_document
+output: html_document
 ---
 
 ```{r, results = 'asis', echo = FALSE}
@@ -60,6 +60,11 @@ M1 <- lm(std_suicides_rate ~ gdp_pc + avg_precipitations + avg_temperature + gin
 
 M2 <- lm(std_suicides_rate ~ gdp_pc + avg_temperature + avg_precipitations , data = MergedData4)
 
+Dataset2009 <- read.csv("TidyDataset2009.csv", header = TRUE, sep = ";", dec = ",", fill = TRUE)
+
+LM1 <- lm(std_suicides_rate ~ gdp_pc + avg_precipitations + avg_temperature + gini_index , data = Dataset2009)
+
+LM2 <- lm(std_suicides_rate ~ gdp_pc + avg_precipitations + avg_temperature, data = Dataset2009)
 ```
 After an accurate process of data cleaning, we came up with the following dataset:
 ```{r,results='asis',echo=FALSE}
@@ -73,7 +78,6 @@ library(xtable)
 TableM1 <- xtable(M1, digits=2)
 
 print.xtable(TableM1)
-
 ```
 
 (PIETRO)
