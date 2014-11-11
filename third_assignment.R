@@ -4,7 +4,6 @@ setwd("Desktop/Hertie/1st Semester/Collaborative Social Science Data Analysis/Th
 
 library(plyr)
 library(dplyr)
-library(psych)
 library(ggplot2)
 library(car)
 
