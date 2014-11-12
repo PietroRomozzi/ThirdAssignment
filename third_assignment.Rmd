@@ -45,6 +45,8 @@ Therefore, we have to put our data trough a tidying process, that is structuring
 To do so we partly used excel's functions, since the data got from ISTAT were not so many and fairly manageable.
 Then we concluded our tidying process in R, using more complex functions which Excel does not allow to use easily.
 What follows is the final part of the tidying process we did on R. As the reader could see, at first we cleaned data for suicides, then we merged them with other data we have cleaned and merged together before, in R as well.
+
+
 ```{r, results = 'asis', echo = FALSE}
 
 library(knitr)
@@ -114,13 +116,16 @@ MergedData4 <- merge(x = MergedData2, y = suicides_clean, union("macro_area", "y
 
 ```
 
+
 In the end, after an accurate process of data cleaning, we came up with the following dataframe:
+
 
 ```{r,results='asis',echo=FALSE}
 
 kable(MergedData4)
 
 ```
+
 
 Data presented above regard:
 
@@ -143,6 +148,7 @@ We also opted for a semplifications of the model, obtained by removing particula
 Further information about our analysis and about the interpretation of our model, will be discussed in the following sections.
 In the meantime, we provide the code we used in R to create our complete and simplified model.
 
+
 ```{r, results='asis', echo=FALSE}
 
 library(foreign)
@@ -161,10 +167,13 @@ M2 <- lm(std_suicides_rate ~ gdp_pc + avg_temperature + avg_precipitations , dat
 
 ```
 
+
+
 ### New model estimation
 
 As we said, we applied this model also to a second dataframe to investigate whether possible to obtain different results using data for regions insted of macro areas.
 Therefore, what follow are the codes we used to build the complete and the simplified linear model for the second dataframe we used.
+
 
 ```{r, results='asis', echo = TRUE}
 
@@ -186,27 +195,36 @@ $$
 
 Firstly, we upoaded a new CSV file, containing data for all Regions.
 
+
 ```{r}
 Dataset2009 <- read.csv("TidyDataset2009.csv", header = TRUE, sep = ";", dec = ",", fill = TRUE)
 ```
 
+
 We called LM1 our first model, and by using the lm command, we includeded our dependent and independent variables.
+
 
 ```{r}
 LM1 <- lm(std_suicides_rate ~ gdp_pc + avg_precipitations + avg_temperature + gini_index , data = Dataset2009)
 
 ```
 
+
+Here there results of the estimation: 
+
+
 ```{r,results='asis',echo=FALSE}
 
 library(xtable)
 
-TableM1 <- xtable(M1, digits=2)
+TableLM1 <- xtable(LM1, digits=2)
 
-print.xtable(TableM1)
+print.xtable(TableLM1)
 
 ```
 
+
+By looking at the summary table, it is clear that none of the variables  included in this model is statistically significant, which means that the model will have to be changed profoundly. Anyway, variables Gdp per capita and gini coefficient seem to be unexpectedly less significant compared to variable temperature: the result of the t test for temperature is much better compared to the results of GDP per capita and Gini coefficient. Since the goal of this short research is exactly that of finding out whether a relationship between climate and suicidial behavour exist, it is interesting to notice that a variable for climate is more significant compared to other socio-econmic indicators, at least in Italy. On the other hand, GDP per capita and Gini coefficient were meant to be our control variables, but they did not succeeded in improving our estimations, given the data we gathered. 
 
 
 Consequently, we run the following commands, which will show simple descriptive statistics operations, in order to interpret our model results:
@@ -221,39 +239,38 @@ Consequently, we run the following commands, which will show simple descriptive 
 * vcov(LM1)
 * influence(LM1)
 
-By looking at the summary table, it is clear that none of the variables we included in our model is statistically significant, which means that the model will have to be changed profoundly. Anyway, variables Gdp per capita and gini coefficient seem to be unexpectedly less significant compared to variable temperature: since the goal of this short research is exactly that of finding out whether a relationship between climate and suicidial behavour exist, it is interesting to notice that a variable for climate is more significant compared to other socio-econmic indicators, at least in Italy. 
-
-```{r,results='asis',echo=FALSE}
-
-library(xtable)
-
-TableLM1 <- xtable(LM1, digits=2)
-
-print.xtable(TableLM1)
-```
 
 After that, the coefficients command was lunched in order to see if the independent variables have a positive or a negative effect on suicide rate. 
+
+
 ```{r}
 coefficients(LM1)
 
 ```
-As expected, annual average temperature and Gdp per capita have a negative impact on suicide rate and also annual precipitations seem to have a positive influence on suicides. On the contrart, variable gini has a negative coefficient, which is not what could be expected by theory. 
+
+
+A table with the coefficient of all the explanatory variables is obtained,from which it is easy to understand, by simply looking at the coefficient sign, if a specific explanatory variable has a positive or a negative impact on suicide rate. As expected, annual average temperature and Gdp per capita have a negative impact on suicide rate and also annual precipitations seem to have a positive influence on suicides. On the contrart, variable gini has a negative coefficient, which is not what could be expected by theory. In fact, it would be easier to think that unjust societies were wealth is distributed unequally are those experiencing higher suicide rates. According to the coefficients table, it is not like this in the Italian case. Also by simply looking at the statistics for standardized suicide rate every 100.000 inhabitants, it becomes clear that suicide rates are lower in Southern Italy, where gini coefficient figures are higher, compared to the North, where income is more equally distributed. 
 However, all coefficents are extremely small and since all variables of our model are insignificant, this is meant to be a simple excercise in preparation for the final paper. 
 
-Through the anova table variance of our explanatory variables is shown. In combination with command plot(), it is a way to diagnose heteroscedasticity. Errors seem to be fairly normally distributed, but model also suffers from heteroscedasticity, at it can be seen in the Anova table and the residuals/Fitted scatter plot. 
+Through the anova table variance of our explanatory variables is shown. In combination with command plot(), it is a way to diagnose heteroscedasticity. Errors seem to be fairly normally distributed, but model also suffers from heteroscedasticity, at it can be seen in the Anova table and the residuals/Fitted scatter plot. In fact, variance is not equally distributed throughout the values, but this may be because of the not very large number of observations, so that few outliers manage to modify the results. 
+
 
 ```{r}
 anova(LM1)
 plot(LM1, which=1)
 ```
 
+
 Command confint(LM1) is used to calculate the confidence intervals for the coefficients and provide a measure of precision for linear regression coefficient estimates. 
+
 
 ```{r}
 confint(LM1)
 ```
 
+
 Finally, we also computed the fitted values for our model, the residuals and the variance-covariance table of the main parameters of the fitted model. 
+
 
 ```{r}
 
@@ -261,6 +278,8 @@ fitted(LM1)
 residuals(LM1)
 vcov(LM1)
 ```
+
+
 
 
 ### Limitations
@@ -275,7 +294,7 @@ In conclusion, the model will be adjusted thanks to new control variables, witho
 
 
 
-### Summary
+###Summary
 -------
 
 
