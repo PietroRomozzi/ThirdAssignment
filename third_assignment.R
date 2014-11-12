@@ -114,10 +114,21 @@ Dataset2009 <- read.csv("TidyDataset2009.csv", header = TRUE, sep = ";", dec = "
 LM1 <- lm(std_suicides_rate ~ gdp_pc + avg_precipitations + avg_temperature + gini_index , data = Dataset2009)
 
 summary(LM1)
+coefficients(LM1)
+confint(LM1)
+fitted(LM1)
+residuals(LM1)
+anova(LM1)
+vcov(LM1)
+influence(LM1)
 
 scatterplotMatrix(Dataset2009[,c(2,3,5,6,7)])
 
 plot(LM1)
+
+
+
+
 
 # Given fews observation, we drop a variable - gini_index - to gain more degrees of freedom. That is because gini index is slightly correlated with gdp per capita.
 
