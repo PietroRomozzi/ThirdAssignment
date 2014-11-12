@@ -8,6 +8,12 @@ library(ggplot2)
 library(car)
 library(xtable)
 
+# Preparing packages to be cited. N.B. It could quit the present R Session for some reasons..
+
+Packages3 <- c("knitr", "plyr", "dplyr", "ggplot2", "car", "xtable", "foreign")
+
+repmis::LoadandCite(Packages3, file = "RPackages.bib", install = FALSE)
+
 # We are about to prepare the dataset on which we will carry on our analysis.
 
 ## After having made our excel data about weather tidy, we have converted them in csv format.

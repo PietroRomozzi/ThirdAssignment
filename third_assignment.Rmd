@@ -1,10 +1,56 @@
 ---
 title: "Suicides in Italy - A comparative analysis among macro regions"
+
 author: "Pietro Romozzi and Federico Colombo"
+
 date: "11 novembre 2014"
+
 output: html_document
+
+bibliography:
+- References3.bib
+
 ---
 
+
+### Research questions
+
+The paper will focus on the relation between suicidal behaviours (an extreme consequence of mental disorders) and various factors concerning climate.
+In particular, we want to test if the following hypothesis hold true: 
+
+- Suicide rate in a certain Italian region increases when the average temperature is low.
+
+- Suicide rate increases when precipitations happen to be frequent.
+
+- Suicide rate increases when GDP per capita is high. 
+
+- Suicide rate increases when economic inequality represented by the gini index.
+
+
+
+
+## Methodology
+
+### Sources and data gathering
+
+For the scope of this work, regional data were necessary; in particular we looked for data about weather (i.e. temperature and precipitations), GDP per capita and inequalities (i.e. gini index).
+Fortunately, most of the data required were founded in the Italian National Institute of Statistics (ISTAT) database, or in other databases of ISTAT-related agencies.
+Accessing to the ISTAT database was fairly easy especially because data were clear and well structured. Nevertheless importing data in R, where we intended to carry out our analysis, was more problematic.
+One necessary step was to export relevant data as .cvs files from the ISTAT website, and then proceed to import them in R using the *read.csv* command.
+Data from the ISTAT database were not tidy though, as in tidy data:
+
+1. Each variable forms a column.
+
+2. Each observation forms a row.
+
+3. Each type of observational unit forms a table.
+
+[@Wickham2014].
+Therefore, we have to put our data trough a tidying process, that is structuring our datasets to facilitate analysis [@Wickham2014].
+
+To do so we partly used excel's functions, since the data got from ISTAT were not so many and fairly manageable.
+Then we concluded our tidying process in R, using more complex functions which Excel does not allow to use easily.
+What follows is the final part of the tidying process we did on R. As the reader could see, at first we cleaned data for suicides, then we merged them with other data we have cleaned and merged together before, in R as well.
 ```{r, results = 'asis', echo = FALSE}
 
 library(knitr)
@@ -13,13 +59,15 @@ library(plyr)
 
 library(ggplot2)
 
+# Loading data frames that we have to merge.
+
 weather <- read.csv("TidyData_meteo.csv", header = TRUE, sep = ";", dec = ",", fill = TRUE)
 
 gini <- read.csv("TidyData_gini.csv", header = T, sep =";", dec = ",", fill = T)
 
-suicides_rough <- read.csv("RoughData_suicides.csv", header = T, sep =";", dec = ",", fill = T)
-
 gdp <- read.csv("RoughData_gdp.csv", header = T, sep =";", dec = ",", fill = T)
+
+# Cleaning data for gdp.
 
 gdp <- data.frame(gdp$TIME, gdp$GEO, gdp$Value)
 
@@ -33,11 +81,23 @@ gdp <- plyr::rename(gdp, replace = c("gdp.GEO" = "macro_area"))
 gdp <- plyr::rename(gdp, replace = c("gdp.TIME" = "year"))
 gdp <- plyr::rename(gdp, replace = c("gdp.Value" = "gdp_pc"))
 
+# Merging data we have just cleaned.
+
 MergedData1 <- merge(x = weather, y = gdp, union("macro_area", "year"), all = T )
 
 MergedData2 <- merge(x = MergedData1, y = gini, union("macro_area", "year"), all = T )
 
+```
+
+```{r, results='asis', echo = TRUE}
+
+# Loading and tidying data for suicides.
+
+suicides_rough <- read.csv("RoughData_suicides.csv", header = T, sep =";", dec = ",", fill = T)
+
 suicides_rough$macro_area <- as.character(suicides_rough$macro_area)
+
+# Replacing wrong-named observation with new ones, analogous to observations in other data used.
 
 suicides_rough$macro_area[suicides_rough$macro_area == "northeast"] <- "north"
 suicides_rough$macro_area[suicides_rough$macro_area == "northwest"] <- "north"
@@ -45,31 +105,88 @@ suicides_rough$macro_area[suicides_rough$macro_area == "islands"] <- "south"
 
 suicides_rough$suicides <- as.numeric(suicides_rough$suicides)
 
+# Then we aggregated data by macro areas.
+# For example we sum northeast and northwest to obtain total suicides for north.
+
 suicides_clean <- dplyr::group_by(suicides_rough, macro_area, year)
 suicides_clean <- dplyr::summarise(suicides_clean, std_suicides_rate = mean(suicides))
+
+# Merging all data in the final dataset.
+# MergedData3 contains NA, MergedData4 does not.
 
 MergedData3 <- merge(x = MergedData2, y = suicides_clean, union("macro_area", "year"), all = T)
 
 MergedData4 <- merge(x = MergedData2, y = suicides_clean, union("macro_area", "year"), all = F)
 
+```
+
+In the end, after an accurate process of data cleaning, we came up with the following dataframe:
+
+```{r,results='asis',echo=FALSE}
+
+kable(MergedData4)
+
+```
+
+Data presented above regard:
+
+- Data about climate obtained from CRA-CMA (Department for meteorology applied to agriculture, ISTAT) regarding annual average temperatures, measured in Celsius degrees, and average annual precipitations, measured in millimiters for all years between 2005 and 2009.
+
+- Data about GDP measured in Euros per capita, found in the ISTAT database as well.
+
+- Data about the Gini Index downloaded from the Istat website. Again, data for the three macroregions we are interested in were available.
+As expected, Gini's index is slightly higher in Southern Regions compared to the Centre and the North.
+
+- Data about suicide rate, measured as number of suicides on 100000 inhabitants.
+
+Unfortunately, as will be explained in the next chapters, after we have carried out our analysis, we found a result problematic to interpret.
+Conviced that a possible explanation, might reside in too aggregated data, we opted for running our linear model on regional data instead of grouped-by-macro-area ones.
+It required the construction of another dataframe, whose data were found in the ISTAT database too, and that we processed directly in Excel since we decided to gather data just for 2009.
+Further developments of our study will try to include a bigger number of observation concerning italian regions or even a panel data analysis.
+
+### Data analysis
+
+We believed that a linear model was an effective way to analyze our dataframe because it could give a clear idea of the impact of the selected indipendent variables on suicides which we chose as to be the dependent variable.
+We also opted for a semplifications of the model, obtained by removing particularly unsignificant variables.
+Further information about our analysis and about the interpretation of our model, will be discussed in the following sections.
+In the meantime, we provide the code we used in R to create our complete and simplified model.
+
+```{r, results='asis', echo=FALSE}
+
 library(foreign)
 
 library(car)
 
-M1 <- lm(std_suicides_rate ~ gdp_pc + avg_precipitations + avg_temperature + gini_index , data = MergedData4)
+```
+
+```{r, results='asis', echo = TRUE}
+
+# Creating linear models to analyze our dataframe.
+
+M1 <- lm(std_suicides_rate ~ gdp_pc + avg_temperature + avg_precipitations + gini_index , data = MergedData4)
 
 M2 <- lm(std_suicides_rate ~ gdp_pc + avg_temperature + avg_precipitations , data = MergedData4)
 
+```
+
+As we said, we applied this model also to a second dataframe to investigate whether possible to obtain different results using data for regions insted of macro areas.
+Therefore, what follow are the codes we used to build the complete and the simplified linear model for the second dataframe we used.
+
+```{r, results='asis', echo = TRUE}
+
+# Loading a new dataframe trying to use the same model in less aggregated data.
+
 Dataset2009 <- read.csv("TidyDataset2009.csv", header = TRUE, sep = ";", dec = ",", fill = TRUE)
+
+# Creating similar linear models to use on Dataset2009.
 
 LM1 <- lm(std_suicides_rate ~ gdp_pc + avg_precipitations + avg_temperature + gini_index , data = Dataset2009)
 
 LM2 <- lm(std_suicides_rate ~ gdp_pc + avg_precipitations + avg_temperature, data = Dataset2009)
+
 ```
-After an accurate process of data cleaning, we came up with the following dataset:
-```{r,results='asis',echo=FALSE}
-kable(MergedData4)
-```
+
+
 
 ```{r,results='asis',echo=FALSE}
 
@@ -80,24 +197,7 @@ TableM1 <- xtable(M1, digits=2)
 print.xtable(TableM1)
 ```
 
-(PIETRO)
 -------
 
-# Sources
 
-Most of the data we needed to estimate our model was available on the ISTAT (Italian National Agency for Statistics) website 
-or in related agencies. The main advantage of using these sources is that data are clear, well structured and easy to use, since 
-they can be downloaded as excel or CSV files, which made it very simple to import the datasets on R. 
-
-Firstly, we started file TidyData_meteo.csv, which we had previously obtained from CRA-CMA (Department for meteorology applied to agriculture, ISTAT). Data were already subdivided by macroregions, namely North, Centre and South Italy. We gathered data regarding annual average temperatures, measured in Celsius degrees, and average annual precipitations, measured in millimiters for all years between 2005 and 2009. 
-
-```{r}
-
-```
-
-We then imported the Gini Index data we downloaded from the Istat website in the form of a CSV file. Again, data for the three macroregions we are interested in were available, as can be seen in the table below. As expected, Gini coefficient index is slightly higher in Southern Regions compared to the Centre and the North. 
-
-```{r, results= "asis"}
- 
-```
-
+## References:
