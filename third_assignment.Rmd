@@ -9,14 +9,14 @@ bibliography: References3.bib
 
 ### Research questions
 
-The paper will focus on the relation between suicidal behaviours (an extreme consequence of mental disorders) and various factors concerning climate.
+The paper will focus on the relation between suicidal behaviours (an extreme consequence of mental disorders) and various factors concerning climate [@Seasonaldisorder].
 In particular, we want to test if the following hypothesis hold true: 
 
-- Suicide rate in a certain Italian region increases when the average temperature is low.
+- Suicide rate in a certain Italian region increases when the average temperature is low [@heatwave].
 
 - Suicide rate increases when precipitations happen to be frequent.
 
-- Suicide rate increases when GDP per capita is high. 
+- Suicide rate increases when GDP per capita is high [@AGlance2013]. 
 
 - Suicide rate increases when economic inequality represented by the gini index.
 
@@ -129,7 +129,7 @@ kable(MergedData4)
 
 Data presented above regard:
 
-- Data about climate obtained from CRA-CMA (Department for meteorology applied to agriculture, ISTAT) regarding annual average temperatures, measured in Celsius degrees, and average annual precipitations, measured in millimiters for all years between 2005 and 2009.
+- Data about climate obtained from CRA-CMA (Department for meteorology applied to agriculture, ISTAT) regarding annual average temperatures, measured in Celsius degrees, and average annual precipitations, measured in millimiters for all years between 2005 and 2009 [@NotaIstat2012].
 
 - Data about GDP measured in Euros per capita, found in the ISTAT database as well.
 
@@ -252,7 +252,7 @@ coefficients(LM1)
 A table with the coefficient of all the explanatory variables is obtained,from which it is easy to understand, by simply looking at the coefficient sign, if a specific explanatory variable has a positive or a negative impact on suicide rate. As expected, annual average temperature and Gdp per capita have a negative impact on suicide rate and also annual precipitations seem to have a positive influence on suicides. On the contrart, variable gini has a negative coefficient, which is not what could be expected by theory. In fact, it would be easier to think that unjust societies were wealth is distributed unequally are those experiencing higher suicide rates. According to the coefficients table, it is not like this in the Italian case. Also by simply looking at the statistics for standardized suicide rate every 100.000 inhabitants, it becomes clear that suicide rates are lower in Southern Italy, where gini coefficient figures are higher, compared to the North, where income is more equally distributed. 
 However, all coefficents are extremely small and since all variables of our model are insignificant, this is meant to be a simple excercise in preparation for the final paper. 
 
-Through the anova table variance of our explanatory variables is shown. In combination with command plot(), it is a way to diagnose heteroscedasticity. Errors seem to be fairly normally distributed, but model also suffers from heteroscedasticity, at it can be seen in the Anova table and the residuals/Fitted scatter plot. In fact, variance is not equally distributed throughout the values, but this may be because of the not very large number of observations, so that few outliers manage to modify the results. 
+Through the anova table variance of our explanatory variables is shown. In combination with command *plot*, it is a way to diagnose heteroscedasticity. Errors seem to be fairly normally distributed, but model also suffers from heteroscedasticity, at it can be seen in the Anova table and the residuals/Fitted scatter plot. In fact, variance is not equally distributed throughout the values, but this may be because of the not very large number of observations, so that few outliers manage to modify the results. 
 
 
 ```{r}
@@ -285,16 +285,14 @@ vcov(LM1)
 ### Limitations
 
 As it has been shown, the explanatory variables of our model are statistically insignificant. For the final paper, it is recommandable to substitute variable for gini index, which has been proved to be particularly neglegible for our estimation, with other variables that could better explain variation of suicide rates across Italy. 
-In particular, self-rated health, a subjective indicator that assesses health status, unemployment rate and urbanisation rate are factors we had already started considering when setting up the model, but which were not included so far, as we expected variables Gdp per capita and Gini coefficient to be better control variables. 
+In particular, self-rated health, a subjective indicator that assesses health status, unemployment rate and urbanisation rate are factors we had already started considering when setting up the model, but which were not included so far, as we expected variables Gdp per capita and Gini coefficient to be better control variables [@PreventingSuicideWHO]. 
 At this point, it becomes crucial to take them into consideration once again. Nevertheless, we do not want to drop variables annual average temperature and annual precipitations even if both have resulted to be insignificant after having conducted some tests on our model. 
-The reasons for this are two: firstly, variable average temperature is the most significant variable of our model and maybe it really has an impact on suicidial behaviours in Italy. Apart from that, we originally decided to estimate this model, as we wanted to find out more regarding the relationship between wheater conditions and suicides, even though we knew we could have encountered problems by estimating such a model.
+The reasons for this are two: firstly, variable average temperature is the most significant variable of our model and maybe it really has an impact on suicidial behaviours in Italy. Apart from that, we originally decided to estimate this model, as we wanted to find out more regarding the relationship between wheater conditions and suicides, even though we knew we could have encountered problems by estimating such a model [@RecessionHO].
 
 In conclusion, the model will be adjusted thanks to new control variables, without giving up the original goal of our research, namely test the relationship between suicide rates and climate factors.  
 
 
 
-
-###Summary
 -------
 
 
