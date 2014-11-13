@@ -57,7 +57,7 @@ library(ggplot2)
 
 # Loading data frames that we have to merge.
 
-weather <- read.csv("TidyData_meteo.csv", header = TRUE, sep = ";", dec = ",", fill = TRUE)
+weather <- read.csv("TidyData_meteo.csv", header = TRUE, sep = ";", dec = ",",fill = TRUE)
 
 gini <- read.csv("TidyData_gini.csv", header = T, sep =";", dec = ",", fill = T)
 
@@ -193,6 +193,8 @@ SuicideRate = \alpha + \beta_{1}Temperature + \beta_{2}Precipitations+
 \beta_{3}Ginicoefficient + \beta_{4}GDPperCap + e
 $$
 
+
+
 Firstly, we upoaded a new CSV file, containing data for all Regions.
 
 
@@ -219,7 +221,7 @@ library(xtable)
 
 TableLM1 <- xtable(LM1, digits=2)
 
-print.xtable(TableLM1)
+print.xtable(TableLM1, comment = F)
 
 ```
 
@@ -243,9 +245,11 @@ Consequently, we run the following commands, which will show simple descriptive 
 After that, the coefficients command was lunched in order to see if the independent variables have a positive or a negative effect on suicide rate. 
 
 
-```{r}
-coefficients(LM1)
+```{r, results='asis', echo=FALSE}
 
+CoefTab1 <- coefficients(LM1)
+
+kable(CoefTab1, caption = "Table of Coefficients")
 ```
 
 
@@ -255,8 +259,12 @@ However, all coefficents are extremely small and since all variables of our mode
 Through the anova table variance of our explanatory variables is shown. In combination with command *plot*, it is a way to diagnose heteroscedasticity. Errors seem to be fairly normally distributed, but model also suffers from heteroscedasticity, at it can be seen in the Anova table and the residuals/Fitted scatter plot. In fact, variance is not equally distributed throughout the values, but this may be because of the not very large number of observations, so that few outliers manage to modify the results. 
 
 
-```{r}
-anova(LM1)
+```{r, results='asis', echo=FALSE}
+
+AnovaTab1 <- anova(LM1)
+
+kable(AnovaTab1)
+
 plot(LM1, which=1)
 ```
 
@@ -264,23 +272,35 @@ plot(LM1, which=1)
 Command confint(LM1) is used to calculate the confidence intervals for the coefficients and provide a measure of precision for linear regression coefficient estimates. 
 
 
-```{r}
-confint(LM1)
+```{r, results='asis', echo=FALSE}
+
+Confint1 <- confint(LM1)
+
+kable(Confint1, caption = "Confidence Intervals")
 ```
 
 
 Finally, we also computed the fitted values for our model, the residuals and the variance-covariance table of the main parameters of the fitted model. 
 
 
-```{r}
+
+```{r, }
 
 fitted(LM1)
-residuals(LM1)
-vcov(LM1)
+
 ```
 
+```{r}
 
+residuals(LM1)
 
+```
+
+```{r, results='asis'}
+
+VcovTab <- vcov(LM1)
+
+```
 
 ### Limitations
 
